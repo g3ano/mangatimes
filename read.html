@@ -1,0 +1,1043 @@
+<!doctype html>
+<html lang="ar">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+        <meta name="description" content="{{ store }}" />
+        <meta
+            property="og:title"
+            content="{{ mangaName }} - {{ specific_chapter.name }}"
+        />
+        <meta property="og:description" content="{{ store }}" />
+        <meta
+            property="og:image"
+            content="{{ url_for('get_image', image_id=specific_chapter.pages[0]) }}"
+        />
+        <meta property="og:image:alt" content="page for {{ mangaName }}" />
+        <meta name="apple-mobile-web-app-title" content="مانجا تايم" />
+        <meta name="msapplication-TileColor" content="#13151a" />
+
+        <meta
+            property="og:url"
+            content="https://mangatime.org/manga-details/{{ manga_id }}/{{ team_id }}/{{specific_chapter.chapter_id}}"
+        />
+        <meta property="og:type" content="website" />
+
+        {% if keywords %}
+        <meta name="keywords" content="{{ keywords }}" />
+        {% endif %}
+
+        <meta
+            property="og:site_name"
+            content="مانجا تايم | أفضل موقع للمانهوا والمانجا العربية"
+        />
+        <meta property="og:locale" content="ar_AR" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="#212529" />
+        <meta
+            name="robots"
+            content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+        />
+
+        <link
+            rel="canonical"
+            href="https://mangatime.org/manga-details/{{ manga_id }}/{{ team_id }}"
+        />
+        <link rel="next" href="https://mangatime.org/categories/" />
+        <link
+            rel="icon"
+            href="https://mangatime.org/static/img/logo.png"
+            sizes="32x32"
+        />
+        <link
+            rel="apple-touch-icon"
+            href="https://mangatime.org/static/img/logo.png"
+            sizes="180x180"
+        />
+        <link
+            rel="shortcut icon"
+            href="https://mangatime.org/static/img/AA.png"
+        />
+        <link rel="preconnect" href="https://mangatime.org" />
+        <link rel="dns-prefetch" href="//www.googletagmanager.com" />
+        <link rel="dns-prefetch" href="//stats.wp.com" />
+        <link rel="dns-prefetch" href="//cdnjs.cloudflare.com" />
+
+        <title>{{ mangaName }} {{ specific_chapter.name }}</title>
+        <style>
+            @import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css");
+
+            #styledSettingsMenu {
+                position: relative;
+            }
+
+            .settingsButton {
+                top: 150px;
+                right: 10px;
+                cursor: pointer;
+                position: fixed;
+                font-size: 13px;
+                text-transform: uppercase;
+                text-decoration: none;
+                padding: 0.5em 1em;
+                display: inline-block;
+                border-radius: 10px;
+                transition: all 0.3s;
+                border: none;
+                font-family: Arial, sans-serif;
+                font-weight: 600;
+                color: white;
+                background-color: #378bfd;
+                cursor: pointer;
+            }
+
+            .settingsButton:hover {
+                transform: scale(1.05);
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            }
+
+            .settingsButton:active {
+                transform: scale(0.95);
+                box-shadow: none;
+            }
+
+            .settingsButton::after {
+                content: "";
+                display: inline-block;
+                height: 100%;
+                width: 100%;
+                border-radius: 10px;
+                position: absolute;
+                top: 0;
+                left: 0;
+                z-index: -1;
+                transition: all 0.4s;
+            }
+
+            .settingsButton::after {
+                background-color: #307be4;
+            }
+
+            .settingsButton:hover::after {
+                transform: scaleX(1.2) scaleY(1.4);
+                opacity: 0;
+            }
+
+            .menu_settings {
+                position: fixed;
+                top: 0;
+                right: 0;
+                width: 300px;
+                height: 100%;
+                background-color: #f8f9fa;
+                box-shadow: -2px 0 5px rgba(0, 0, 0, 0.5);
+                transform: translateX(100%);
+                transition: transform 0.3s ease;
+                z-index: 1000;
+            }
+
+            .menu_settings.open_settings {
+                transform: translateX(0);
+            }
+
+            #closeButton_settings {
+                margin-top: 20px;
+                padding: 10px 20px;
+                background-color: #dc3545;
+                color: #fff;
+                border: none;
+                cursor: pointer;
+                border-radius: 5px;
+                transition: background-color 0.3s;
+            }
+
+            #closeButton_settings:hover {
+                background-color: #c82333;
+            }
+
+            .backdrop_settings {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0, 0, 0, 0.5);
+                opacity: 0;
+                visibility: hidden;
+                transition: opacity 0.3s ease;
+                z-index: 900;
+            }
+
+            .backdrop_settings.visible_settings {
+                opacity: 1;
+                visibility: visible;
+            }
+
+            #scrollMenu {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                width: 100%;
+                background-color: #333;
+                padding: 10px 0;
+                text-align: center;
+                display: none;
+                z-index: 1000;
+            }
+
+            #scrollButton {
+                background-color: #007bff;
+                color: white;
+                padding: 10px 20px;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                transition: background-color 0.3s;
+            }
+
+            #scrollButton:hover {
+                background-color: #0056b3;
+            }
+
+            .elementsSettings {
+                padding: 20px;
+                font-family: Arial, sans-serif;
+            }
+
+            /* Heading Styles */
+            .elementsSettings h2 {
+                font-size: 24px;
+                color: #333;
+                margin-bottom: 20px;
+            }
+
+            /* Label Styles */
+            .slider-label {
+                display: block;
+                font-size: 16px;
+                color: #555;
+                margin-bottom: 10px;
+            }
+
+            /* Slider Container */
+            .slider-container {
+                position: relative;
+                display: flex;
+                align-items: center;
+            }
+
+            /* Slider Styles */
+            .slider {
+                -webkit-appearance: none;
+                appearance: none;
+                width: 100%;
+                height: 10px;
+                border-radius: 5px;
+                background: #4a5a77;
+                outline: none;
+                margin-right: 10px;
+            }
+
+            .slider::-webkit-slider-thumb {
+                -webkit-appearance: none;
+                appearance: none;
+                width: 20px;
+                height: 20px;
+                background: #fff;
+                border: 2px solid #007bff;
+                border-radius: 50%;
+                cursor: pointer;
+            }
+
+            .slider::-moz-range-thumb {
+                width: 20px;
+                height: 20px;
+                background: #fff;
+                border: 2px solid #007bff;
+                border-radius: 50%;
+                cursor: pointer;
+            }
+
+            /* Slider Value Styles */
+            .slider-value {
+                font-size: 16px;
+                color: #007bff;
+            }
+
+            /* Close Button Styles */
+            #closeButton_settings {
+                margin-top: 20px;
+                padding: 10px 20px;
+                background-color: #dc3545;
+                color: #fff;
+                border: none;
+                cursor: pointer;
+                border-radius: 5px;
+                transition: background-color 0.3s;
+            }
+
+            #closeButton_settings:hover {
+                background-color: #c82333;
+            }
+            @media (max-width: 600px) {
+                .menu_settings {
+                    width: 100%;
+                    right: auto;
+                    transform: translateX(100%);
+                }
+
+                .menu_settings.open_settings {
+                    transform: translateX(0);
+                }
+            }
+        </style>
+        <script type="application/ld+json">
+            {
+                "@context": "https://schema.org",
+                "@type": "ComicSeries",
+                "name": "{{ mangaName }}",
+                "author": {
+                    "@type": "Person",
+                    "name": "Manga Time"
+                },
+                "illustrator": {
+                    "@type": "Person",
+                    "name": "Manga Time"
+                },
+                "publisher": {
+                    "@type": "Organization",
+                    "name": "Manga Time",
+                    "url": "https://mangatime.org",
+                    "logo": {
+                        "@type": "ImageObject",
+                        "url": "https://mangatime.org/static/img/AA.png",
+                        "width": 512,
+                        "height": 512
+                    },
+                    "contactPoint": {
+                        "@type": "ContactPoint",
+                        "contactType": "Customer Service",
+                        "email": "contact@mangatime.org",
+                        "availableLanguage": ["Arabic", "English"]
+                    }
+                },
+                "mainEntityOfPage": {
+                    "@type": "WebPage",
+                    "@id": "https://mangatime.org/manga-details/{{ manga_id }}/{{ team_id }}"
+                },
+                "datePublished": "{{ manga_info.upload_start_date }}",
+                "dateModified": "{{ manga_info.date_of_last_upload }}",
+                "status": "{{ manga_info.status }}",
+                "potentialAction": {
+                    "@type": "ReadAction",
+                    "target": "https://mangatime.org/read/{{ manga_id }}/{{ team_id }}/{{ specific_chapter.chapter_id }}"
+                },
+                "hasPart": [
+                    {% for chapter in manga_info.chapters %}
+                    {
+                        "@type": "ComicStory",
+                        "name": "{{ chapter.name }} Chapter {{ chapter.name }}",
+                        "url": "https://mangatime.org/read/{{ manga_id }}/{{ team_id }}/{{ specific_chapter.chapter_id }}",
+                        "datePublished": "{{ chapter.upload_time }}",
+                        "isPartOf": {
+                            "@type": "ComicSeries",
+                            "name": "{{ mangaName }} chapter {{ chapter.name }}"
+                        }
+                    }{% if not loop.last %},{% endif %}
+                    {% endfor %}
+                ],
+                "@graph": [{
+                    "@type": "WebPage",
+                    "@id": "https://mangatime.org/manga-details/{{ manga_id }}/{{ team_id }}",
+                    "url": "https://mangatime.org/manga-details/{{ manga_id }}/{{ team_id }}",
+                    "name": " {{ mangaName }} -  {{ otherNames }}",
+                    "isPartOf": {
+                        "@id": "https://www.mangatime.org/#website"
+                    },
+                    "primaryImageOfPage": {
+                        "@id": "{{ url_for('get_image', image_id=specific_chapter.pages[0]) }}"
+                    },
+                    "image": {
+                        "@id": "{{ url_for('get_image', image_id=specific_chapter.pages[0]) }}"
+                    },
+                    "thumbnailUrl": "{{ url_for('get_image', image_id=specific_chapter.pages[0]) }}",
+                    "datePublished": "{{ manga_info.upload_start_date }}",
+                    "dateModified": "{{ manga_info.date_of_last_upload }}",
+                    "breadcrumb": {
+                        "@id": "https://mangatime.org/manga-details/{{ manga_id }}/{{ team_id }}"
+                    },
+                    "inLanguage": "ar",
+                    "potentialAction": [{
+                        "@type": "ReadAction",
+                        "target": ["https://mangatime.org/read/{{ manga_id }}/{{ team_id }}/{{ specific_chapter.chapter_id }}"]
+                    }]
+                },
+                {
+                    "@type": "ComicStory",
+                    "name": "{{ specific_chapter.name }} Chapter {{ specific_chapter.name }}",
+                    "url": "https://mangatime.org/read/{{ manga_id }}/{{ team_id }}/{{ specific_chapter.chapter_id }}",
+                    "datePublished": "{{ specific_chapter.upload_time }}",
+                    "isPartOf": {
+                        "@type": "ComicSeries",
+                        "name": "{{ mangaName }} chapter {{ specific_chapter.name }}"
+                    },
+                    "description": "{{ chapter_summary|replace('\n', '') }}"
+                }
+                ]
+            }
+        </script>
+
+        <!-- Google Font -->
+        <link
+            href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&display=swap"
+            rel="stylesheet"
+        />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Mulish:wght@300;400;500;600;700;800;900&display=swap"
+            rel="stylesheet"
+        />
+        <link
+            rel="stylesheet"
+            href="{{url_for('static', filename = 'css/STL.css')}}"
+            type="text/css"
+        />
+
+        <!-- Css Styles -->
+        <link
+            rel="stylesheet"
+            href="{{url_for('static', filename = 'css/bootstrap.min.css')}}"
+            type="text/css"
+        />
+        <link
+            rel="stylesheet"
+            href="{{url_for('static', filename = 'css/font-awesome.min.css')}}"
+            type="text/css"
+        />
+        <link
+            rel="stylesheet"
+            href="{{url_for('static', filename = 'css/elegant-icons.css')}}"
+            type="text/css"
+        />
+        <link
+            rel="stylesheet"
+            href="{{url_for('static', filename = 'css/plyr.css')}}"
+            type="text/css"
+        />
+        <link
+            rel="stylesheet"
+            href="{{url_for('static', filename = 'css/owl.carousel.min.css')}}"
+            type="text/css"
+        />
+        <link
+            rel="stylesheet"
+            href="{{url_for('static', filename = 'css/slicknav.min.css')}}"
+            type="text/css"
+        />
+        <link
+            rel="stylesheet"
+            href="{{url_for('static', filename = 'css/style.css')}}"
+            type="text/css"
+        />
+        <style>
+            #chapter-pages {
+                text-align: center;
+            }
+
+            .chapter-page {
+                margin: auto;
+                display: block;
+            }
+
+            .chapter-page img {
+                width: 100%;
+                height: auto;
+            }
+
+            .chapter-dropdown {
+                align-self: center;
+                background-color: #fff;
+                background-image: none;
+                background-position: 0 90%;
+                background-repeat: repeat no-repeat;
+                background-size: 4px 3px;
+                border-style: solid;
+                border-width: 2px;
+                box-shadow: rgba(0, 0, 0, 0.2) 15px 28px 25px -18px;
+                box-sizing: border-box;
+                color: #41403e;
+                cursor: pointer;
+                display: inline-block;
+                font-family: Neucha, sans-serif;
+                font-size: 1rem;
+                line-height: 23px;
+                outline: none;
+                padding: 0.75rem;
+                text-decoration: none;
+                transition: all 235ms ease-in-out;
+                user-select: none;
+                -webkit-user-select: none;
+                touch-action: manipulation;
+                width: -webkit-fill-available;
+            }
+
+            .chapter-dropdown:hover {
+                border-color: #007bff;
+            }
+
+            .chapter-dropdown:focus {
+                border-color: #007bff;
+                box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+            }
+
+            .chapter-dropdown option {
+                padding: 10px 20px;
+                background-color: #fff;
+                color: #333;
+            }
+
+            .chapter-dropdown option:hover {
+                background-color: #f0f0f0;
+            }
+
+            .chapter-dropdown option:checked {
+                background-color: #007bff;
+                color: #fff;
+            }
+
+            .button-50 {
+                appearance: button;
+                background-color: #222631;
+                background-image: none;
+                border: 1px solid #000;
+                border-radius: 4px;
+                box-shadow:
+                    #b2d4d7 4px 4px 0 0,
+                    #000 4px 4px 0 1px;
+                box-sizing: border-box;
+                color: #fff;
+                cursor: pointer;
+                display: inline-block;
+                font-family: ITCAvantGardeStd-Bk, Arial, sans-serif;
+                font-size: 14px;
+                font-weight: 400;
+                line-height: 20px;
+                margin: 0 5px 10px 0;
+                overflow: visible;
+                padding: 12px 40px;
+                text-align: center;
+                text-transform: none;
+                touch-action: manipulation;
+                user-select: none;
+                -webkit-user-select: none;
+                vertical-align: middle;
+                white-space: nowrap;
+                width: -webkit-fill-available;
+            }
+
+            .button-50:focus {
+                text-decoration: none;
+            }
+
+            .button-50:hover {
+                text-decoration: none;
+            }
+
+            .button-50:active {
+                box-shadow: rgba(0, 0, 0, 0.125) 0 3px 5px inset;
+                outline: 0;
+            }
+
+            .button-50:not([disabled]):active {
+                box-shadow:
+                    #fff 2px 2px 0 0,
+                    #000 2px 2px 0 1px;
+                transform: translate(2px, 2px);
+            }
+            .button-incomplete {
+                box-shadow:
+                    #ff8484 2px 2px 0 0,
+                    #000 2px 2px 0 1px;
+                transform: translate(2px, 2px);
+            }
+
+            .chapter-summary {
+                background-color: #f9f9f9;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+                padding: 20px;
+                margin: 20px 0;
+            }
+
+            .chapter-summary h2 {
+                font-size: 24px;
+                color: #333;
+                margin-bottom: 15px;
+                direction: rtl;
+                text-align: justify;
+            }
+
+            .chapter-summary p {
+                direction: rtl;
+                text-align: justify;
+                font-size: 16px;
+                color: #666;
+                line-height: 1.6;
+            }
+        </style>
+    </head>
+
+    <body>
+        <!-- Page Preloder -->
+        <!-- Page Preloder -->
+        <!-- <div id="preloder"> -->
+        <!--     <div class="loader"></div> -->
+        <!-- </div> -->
+
+        <h1
+            aria-hidden="true"
+            style="position: absolute; left: -9999px; color: rgb(0 0 0 / 0%)"
+        >
+            {{ mangaName }} - {{ specific_chapter.name }}
+        </h1>
+        <h1
+            aria-hidden="true"
+            style="position: absolute; left: -9999px; color: rgb(0 0 0 / 0%)"
+        >
+            {{ mangaName }} - مانجا تايم
+        </h1>
+        <h2
+            aria-hidden="true"
+            style="position: absolute; left: -9999px; color: rgb(0 0 0 / 0%)"
+        >
+            {{ store }}
+        </h2>
+
+        <h1
+            aria-hidden="true"
+            style="position: absolute; left: -9999px; color: rgb(0 0 0 / 0%)"
+        >
+            {{ mangaName }} - {{ chapterNumber }} مانجا تايم
+        </h1>
+        <h1
+            aria-hidden="true"
+            style="position: absolute; left: -9999px; color: rgb(0 0 0 / 0%)"
+        >
+            {{ mangaName }} - {{ chapterNumber }} مانجا
+        </h1>
+        <h1
+            aria-hidden="true"
+            style="position: absolute; left: -9999px; color: rgb(0 0 0 / 0%)"
+        >
+            {{ mangaName }} - {{ chapterNumber }} مانهوا
+        </h1>
+        <h2
+            aria-hidden="true"
+            style="position: absolute; left: -9999px; color: rgb(0 0 0 / 0%)"
+        >
+            {{ mangaName }} - {{ chapterNumber }}
+        </h2>
+
+        {% include 'header.html' %}
+        <div>{% include 'AI-chat.html' %}</div>
+
+        <!-- Breadcrumb Begin -->
+        <div class="breadcrumb-option">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="breadcrumb__links">
+                            <a href="{{ url_for('index') }}"
+                                ><i class="fa fa-home"></i>الصفحة الرئيسية</a
+                            >
+                            <a href="{{ url_for('categories') }}"
+                                >قائمة المانجا</a
+                            >
+                            <a
+                                href="https://mangatime.org/manga-details/{{ manga_id }}/{{ team_id }}"
+                                >{{ mangaName }}</a
+                            >
+                            <span>{{ chapterNumber }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Breadcrumb End -->
+        <br />
+        <br />
+        <section class="spad">
+            <div class="container">
+                <div class="anime__details__content">
+                    <div class="product__page__title" bis_skin_checked="1"></div>
+                        <div class="row" bis_skin_checked="1"></div>
+                            <div class="col-lg-8" bis_skin_checked="1"></div>
+                                <div class="section-title" bis_skin_checked="1">
+                                    <h4>
+                                        {{ mangaName }} / {{ chapterNumber }}
+                                    </h4>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <select
+                        class="chapter-dropdown"
+                        id="chapter-dropdown"
+                    ></select>
+                    <br />
+                    <br />
+
+                    <div id="chapter-pages">
+                        <br />
+                    </div>
+
+                    <br />
+                    <button
+                        id="next-chapter-btn"
+                        class="button-50"
+                        onclick="goToNextChapter()"
+                    >
+                        الفصل التالي
+                    </button>
+                    <br />
+                    <div class="chapter-summary">
+                        <h2>{{ chapterNumber }} شابتر {{ mangaName }} مانجا</h2>
+                        <p id="summary-content">{{ chapter_summary|safe }}</p>
+                    </div>
+                    <!-- Chapter Summary Section End -->
+                </div>
+            </div>
+
+            <button id="settingsButton" class="settingsButton">
+                <i class="fas fa-cog"></i>
+            </button>
+            <div id="styledSettingsMenu">
+                <div id="settingsMenu" class="menu_settings">
+                    <div class="elementsSettings">
+                        <h2>الإعدادات</h2>
+                        <label for="speedSlider" class="slider-label"
+                                >سرعة نزول الصفحة:</label
+                        >
+                        <div class="slider-container">
+                            <input
+                                type="range"
+                                id="speedSlider"
+                                min="1"
+                                max="8"
+                                value="1"
+                                class="slider"
+                            />
+                            <span id="sliderValue" class="slider-value">1</span>
+                        </div>
+                        <button id="closeButton_settings">إغلاق</button>
+                    </div>
+                </div>
+                <div class="backdrop_settings" id="backdrop"></div>
+            </div>
+
+            <div id="backdrop_settings" class="backdrop_settings"></div>
+
+            <div id="scrollMenu">
+                <button id="scrollButton">Play</button>
+            </div>
+        </section>
+
+        {% include 'footer.html' %}
+
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                // Select the paragraph element containing the chapter summary
+                var summaryElement = document.getElementById("summary-content");
+
+                // Modify the content of the paragraph
+                if (summaryElement) {
+                    summaryElement.innerHTML = summaryElement.innerHTML.replace(
+                        /\n/g,
+                        "<br>",
+                    );
+                    summaryElement.innerHTML = summaryElement.innerHTML.replace(
+                        /\*\*(.*?)\*\*/g,
+                        "<strong>$1</strong>",
+                    );
+                }
+            });
+        </script>
+
+        <script>
+            var PlayeDownBarIsOpen;
+            function showScrollMenu() {
+                document.getElementById("scrollMenu").style.display = "block";
+            }
+
+            function hideScrollMenu() {
+                document.getElementById("scrollMenu").style.display = "none";
+            }
+
+            var isScrollingPlay = false;
+
+            function startScrollDown() {
+                if (isScrollingPlay) {
+                    window.scrollBy(0, 1 * window.scrollSpeed);
+                    setTimeout(startScrollDown, 10);
+                }
+            }
+
+            document
+                .getElementById("scrollButton")
+                .addEventListener("click", function (event) {
+                    var scrollButton = document.getElementById("scrollButton");
+                    if (scrollButton.textContent === "Play") {
+                        scrollButton.textContent = "Stop";
+                        isScrollingPlay = true;
+                        startScrollDown();
+                    } else {
+                        scrollButton.textContent = "Play";
+                        isScrollingPlay = false;
+                    }
+                });
+
+            document.addEventListener("click", function (event) {
+                var target = event.target;
+                var scrollMenu = document.getElementById("scrollMenu");
+                if (target.id === "showMenuButton") {
+                    if (PlayeDownBarIsOpen == true) {
+                        hideScrollMenu();
+                        PlayeDownBarIsOpen = false;
+                    } else {
+                        showScrollMenu();
+                        PlayeDownBarIsOpen = true;
+                    }
+                } else if (
+                    target !== scrollMenu &&
+                    !scrollMenu.contains(target)
+                ) {
+                    hideScrollMenu();
+                    PlayeDownBarIsOpen = false;
+                }
+            });
+        </script>
+
+        <script>
+            document.addEventListener("DOMContentLoaded", () => {
+                const settingsButton =
+                    document.getElementById("settingsButton");
+                const settingsMenu = document.getElementById("settingsMenu");
+                const closeButton = document.getElementById(
+                    "closeButton_settings",
+                );
+                const backdrop = document.getElementById("backdrop_settings");
+                const speedSlider = document.getElementById("speedSlider");
+                const sliderValue = document.getElementById("sliderValue");
+
+                function openMenu() {
+                    settingsMenu.classList.add("open_settings");
+                    backdrop.classList.add("visible_settings");
+                }
+
+                function closeMenu() {
+                    settingsMenu.classList.remove("open_settings");
+                    backdrop.classList.remove("visible_settings");
+                }
+
+                function setCookie(name, value, days) {
+                    let expires = "";
+                    if (days) {
+                        const date = new Date();
+                        date.setTime(
+                            date.getTime() + days * 24 * 60 * 60 * 1000,
+                        );
+                        expires = "; expires=" + date.toUTCString();
+                    }
+                    document.cookie =
+                        name + "=" + (value || "") + expires + "; path=/";
+                }
+
+                function getCookie(name) {
+                    const nameEQ = name + "=";
+                    const ca = document.cookie.split(";");
+                    for (let i = 0; i < ca.length; i++) {
+                        let c = ca[i];
+                        while (c.charAt(0) == " ") c = c.substring(1, c.length);
+                        if (c.indexOf(nameEQ) == 0)
+                            return c.substring(nameEQ.length, c.length);
+                    }
+                    return null;
+                }
+
+                function updateSliderValue() {
+                    sliderValue.textContent = speedSlider.value;
+                    window.scrollSpeed = speedSlider.value;
+
+                    setCookie("scrollSpeed", speedSlider.value, 7);
+                }
+
+                const savedSpeed = getCookie("scrollSpeed");
+                window.scrollSpeed = savedSpeed;
+
+                if (savedSpeed) {
+                    speedSlider.value = savedSpeed;
+                    window.scrollSpeed = savedSpeed;
+                    sliderValue.textContent = savedSpeed;
+                }
+
+                settingsButton.addEventListener("click", openMenu);
+                closeButton.addEventListener("click", closeMenu);
+                backdrop.addEventListener("click", closeMenu);
+                speedSlider.addEventListener("input", updateSliderValue);
+            });
+        </script>
+
+        <!-- Include LazyLoad library script -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.1.2/lazysizes.min.js"></script>
+
+        <script>
+            function addChapterToListDropdrog(chapter) {
+                const dropdown = document.getElementById('chapter-dropdown');
+                if (dropdown) {
+                    const option = document.createElement('option');
+                    option.value = chapter.chapter_id;
+                    option.textContent = `${chapter.name} - ${chapter.order}`;
+                    if (chapter.order == '{{ chapterNumber }}') {
+                        option.selected = true;
+                    }
+                    dropdown.appendChild(option);
+                } else {
+                    console.error('Dropdown element not found');
+                }
+            }
+
+            {% for chapter in manga_info.chapters | sort(attribute='order') %}
+                addChapterToListDropdrog({{ chapter | tojson }});
+            {% endfor %}
+
+            const dropdown = document.getElementById('chapter-dropdown');
+            const nextOption = dropdown.options[dropdown.selectedIndex + 1];
+            const nextChapterBtn = document.getElementById('next-chapter-btn');
+
+            if (nextChapterBtn) {
+                if (!nextOption) {
+                    nextChapterBtn.classList.add('button-incomplete');
+                } else {
+                    nextChapterBtn.classList.remove('button-incomplete');
+                }
+            } else {
+                console.error('Next Chapter button not found');
+            }
+
+
+            function goToNextChapter() {
+                const dropdown = document.getElementById('chapter-dropdown');
+                const nextOption = dropdown.options[dropdown.selectedIndex + 1];
+                if (nextOption) {
+                    const nextChapterId = nextOption.value;
+                    const mangaId = '{{ manga_id }}';
+                    const teamId = '{{ team_id }}';
+                    const url = `https://mangatime.org/read/${mangaId}/${teamId}/${nextChapterId}`;
+                    window.location.href = url;
+                }
+            }
+            function handleChapterChange() {
+                const dropdown = document.getElementById('chapter-dropdown');
+                const selectedChapterId = dropdown.value;
+                const mangaId = '{{ manga_id }}';
+                const teamId = '{{ team_id }}';
+                const url = `https://mangatime.org/read/${mangaId}/${teamId}/${selectedChapterId}`;
+                window.location.href = url;
+            }
+
+            document.addEventListener('DOMContentLoaded', () => {
+                const dropdown = document.getElementById('chapter-dropdown');
+                if (dropdown) {
+                    dropdown.addEventListener('change', handleChapterChange);
+                } else {
+                    console.error('Dropdown element not found');
+                }
+            });
+
+            function getShortUrl()
+            {
+                var xhr = new XMLHttpRequest();
+                var url = '/getShortURL';
+                var data = {
+                    url: window.location.href
+                };
+                var jsonData = JSON.stringify(data);
+                xhr.open('POST', url, true);
+                xhr.setRequestHeader('Content-Type', 'application/json');
+                xhr.onload = function() {
+                    if (xhr.status >= 200 && xhr.status < 300) {
+                        if (xhr.responseText !== "NULL") {
+                            history.replaceState(null, '', "https://mangatime.org/"+xhr.responseText);
+                        }
+                    } else {
+                        console.error('Request failed with status:', xhr.status);
+                    }
+                };
+                xhr.send(jsonData);
+            }
+            getShortUrl();
+            document.addEventListener("DOMContentLoaded", function () {
+                const container = document.getElementById('chapter-pages');
+                const pages = JSON.parse('{{ page_analysis_info | tojson | safe }}');
+                console.log(pages);
+                // Loop through each image in specific_chapter.pages
+                {% for page in specific_chapter.pages %}
+                setTimeout(function () {
+                    const imageElement{{ loop.index }} = document.createElement('img');
+                    imageElement{{ loop.index }}.className = 'lazyload chapter-page';
+                    imageElement{{ loop.index }}.id = 'showMenuButton';
+                    imageElement{{ loop.index }}.loading = 'lazy';
+                    imageElement{{ loop.index }}.dataset.src = '{{ url_for('get_image', image_id=page) }}';
+                    imageElement{{ loop.index }}.decoding = 'async';
+
+                    if (pages[{{ loop.index }}] && pages[{{ loop.index }}].id) {
+                        // Fetch image description and set alt attribute
+                        fetch('/fetch_image_description/' + pages[{{ loop.index }}].id)
+                            .then(response => response.json())
+                            .then(data => {
+                                imageElement{{ loop.index }}.alt = '{{ mangaName }} - ' + data.text;
+                            })
+                            .catch(error => {
+                                console.error('Error fetching image description:', error);
+                                imageElement{{ loop.index }}.alt = '{{ mangaName }} - Page {{ loop.index + 1 }}';
+                            });
+                    } else {
+                imageElement{{ loop.index }}.alt = '{{ mangaName }} - Page {{ loop.index + 1 }}';
+            }
+                    container.appendChild(imageElement{{ loop.index }});
+                }, {{ loop.index }} * 1000);
+                {% endfor %}
+            });
+
+            function addView() {
+                var xhr = new XMLHttpRequest();
+                xhr.open("POST", "/add_view", true);
+                xhr.setRequestHeader("Content-Type", "application/json");
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState === 4) {
+                        if (xhr.status === 200) {
+                            console.log("View added successfully");
+                        } else {
+                            console.error("Error adding view");
+                        }
+                    }
+                };
+                xhr.onerror = function() {
+                    console.error("Error:", xhr.statusText);
+                };
+                xhr.send(JSON.stringify({
+                    id: "{{ manga_id }}"
+                }));
+            }
+            addView();
+        </script>
+
+        <script src="{{url_for('static', filename = 'js/jquery-3.3.1.min.js')}}"></script>
+        <script src="{{url_for('static', filename = 'js/bootstrap.min.js')}}"></script>
+        <script src="{{url_for('static', filename = 'js/player.js')}}"></script>
+        <script src="{{url_for('static', filename = 'js/mixitup.min.js')}}"></script>
+        <script src="{{url_for('static', filename = 'js/jquery.slicknav.js')}}"></script>
+        <script src="{{url_for('static', filename = 'js/owl.carousel.min.js')}}"></script>
+        <script src="{{url_for('static', filename = 'js/main.js')}}"></script>
+    </body>
+</html>
