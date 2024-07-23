@@ -1,1 +1,1 @@
-# Interface for Mangatime
+# Client interface for Mangatime
