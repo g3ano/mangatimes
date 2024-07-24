@@ -17,17 +17,30 @@ import { EventStore } from './helpers.js';
     };
   }
 
-  window.addEventListener('pages-gap-toggle-click', function (e) {
+  /**
+   * @param {CustomEvent} e
+   */
+  function handlePageGapToggleClick(e) {
     updateChapterPagesGap(e);
-  });
+  }
 
-  window.addEventListener('direction-toggle-click', function (e) {
+  /**
+   * @param {CustomEvent} e
+   */
+  function handleDirectionToggleClick(e) {
     updateChapterPagesDirection(e);
-  });
+  }
 
-  window.addEventListener('tap-navigation-click', function (e) {
+  /**
+   * @param {CustomEvent} e
+   */
+  function handleTapNavigationClick(e) {
     toggleTapNavigation(e);
-  });
+  }
+
+  window.addEventListener('pages-gap-toggle-click', handlePageGapToggleClick);
+  window.addEventListener('direction-toggle-click', handleDirectionToggleClick);
+  window.addEventListener('tap-navigation-click', handleTapNavigationClick);
 
   /**
    * @param {CustomEvent} e
@@ -110,8 +123,7 @@ import { EventStore } from './helpers.js';
      * @param {HTMLElement} element
      */
     function advanceByPage(parent, element) {
-      const height = element.getBoundingClientRect().height;
-      const width = element.getBoundingClientRect().width;
+      const { width, height } = element.getBoundingClientRect();
 
       if (!state.direction || state.direction === 'column') {
         return window.scrollBy({ top: height, behavior: 'smooth' });
