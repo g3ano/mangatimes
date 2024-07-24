@@ -73,7 +73,7 @@ export class PagesGapToggle extends BaseToggle {
   }
 
   #attachEventListeners() {
-    const input = this.shadowRoot.querySelector('input.gap-size');
+    const input = this.shadow.querySelector('input.gap-size');
 
     if (!input) {
       return;
