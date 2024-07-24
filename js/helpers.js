@@ -19,7 +19,7 @@ export class EventStore {
 
   /**
    * @callback Listener
-   * @param {WheelEvent} e
+   * @param {Event} e
    * @returns {void}
    */
   /**
