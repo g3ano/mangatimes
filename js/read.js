@@ -5,6 +5,15 @@ import { Scroller } from './scroller.js';
 import { EventStore } from './helpers.js';
 
 (function () {
+  /**
+   * @typedef {Object} State
+   * @property {'column'|'row-reverse'} direction
+   * @property {Map} stores
+   * @property {MutationObserver} observer
+   */
+  /**
+   * @type {State}
+   */
   let state = {};
 
   /**
@@ -72,9 +81,11 @@ import { EventStore } from './helpers.js';
     updateState({ direction });
 
     chapterPages.style.flexDirection = direction;
+
     [...chapterPages.children].forEach((child) => {
-      child.style.maxHeight = '98vh';
-      child.style.maxWidth = '98vw';
+      child.style.minHeight = 'max(98vh, 100%)';
+      child.style.maxWidth = 'min(98vw, 600px)';
+      child.style.marginBlockStart = '0';
     });
 
     const scroller = new Scroller(chapterPages);
@@ -97,32 +108,46 @@ import { EventStore } from './helpers.js';
     const { status } = e.detail;
 
     if (!state.stores) {
-      state.stores = [];
+      state.stores = new Map();
     }
 
-    [...chapterPages.children].forEach((child, index) => {
-      child.style.userSelect = 'none';
+    if (!status && state.observer) {
+      state.observer.disconnect();
+    }
 
-      if (status && state.stores?.[index]?.hasAny()) {
+    [...chapterPages.children].forEach((child) => {
+      attachEventToImage(child);
+    });
+
+    /**
+     * Attach click event to page image
+     *
+     * @param {HTMLImageElement} element
+     */
+    function attachEventToImage(element) {
+      element.style.userSelect = 'none';
+
+      const key = element.dataset.src;
+
+      if (status && state.stores?.get(key)?.hasAny()) {
         return;
       }
 
       if (!status) {
-        state.stores?.[index]?.clear();
+        state.stores?.get(key)?.clear();
         return;
       }
 
-      state.stores[index] = new EventStore(child);
-      state.stores[index].add('click', () =>
-        advanceByPage(chapterPages, child)
-      );
-    });
+      state.stores.set(key, new EventStore(element));
+      state.stores.get(key).add('click', () => advanceByPage(chapterPages));
+    }
 
     /**
+     * Advance page by window width and height size
+     *
      * @param {HTMLElement} parent
-     * @param {HTMLElement} element
      */
-    function advanceByPage(parent, element) {
+    function advanceByPage(parent) {
       const { width, height } = window.screen;
 
       if (!state.direction || state.direction === 'column') {
@@ -131,6 +156,40 @@ import { EventStore } from './helpers.js';
 
       parent.scrollBy({ left: -width, behavior: 'smooth' });
     }
+
+    (function () {
+      if (state.observer) {
+        return;
+      }
+
+      const observer = new MutationObserver(function (records) {
+        for (const record of records) {
+          if (record.type !== 'childList') {
+            return;
+          }
+
+          [...record.addedNodes].forEach((node) => {
+            if (node.nodeName !== 'IMG') {
+              return;
+            }
+
+            attachEventToImage(node);
+          });
+        }
+      });
+
+      /**
+       * @type {HTMLElement}
+       */
+      const chapterPages = document.querySelector('#chapter-pages');
+
+      observer.observe(chapterPages, {
+        childList: true,
+        subtree: true,
+      });
+
+      state.observer = observer;
+    })();
   }
 
   customElements.define('pages-gap-toggle', PagesGapToggle);
