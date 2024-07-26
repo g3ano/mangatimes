@@ -123,7 +123,7 @@ import { EventStore } from './helpers.js';
      * @param {HTMLElement} element
      */
     function advanceByPage(parent, element) {
-      const { width, height } = element.getBoundingClientRect();
+      const { width, height } = window.screen;
 
       if (!state.direction || state.direction === 'column') {
         return window.scrollBy({ top: height, behavior: 'smooth' });
