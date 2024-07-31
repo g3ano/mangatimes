@@ -1096,7 +1096,6 @@
           mangaId: '{{ manga_id }}',
           teamId: '{{ team_id }}',
         };
-        console.log('manga meta set');
       })();
 
       function goToNextChapter() {
@@ -1161,7 +1160,6 @@
       document.addEventListener('DOMContentLoaded', function () {
         const container = document.getElementById('chapter-pages');
         const pages = JSON.parse('{{ page_analysis_info | tojson | safe }}');
-        console.log(pages);
         // Loop through each image in specific_chapter.pages
         // {% for page in specific_chapter.pages %}
         // setTimeout(function () {
