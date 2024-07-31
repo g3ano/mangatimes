@@ -712,7 +712,7 @@
     <br />
     <br />
     <section class="spad">
-      <div class="container">
+      <div>
         <div class="anime__details__content">
           <div
             class="product__page__title container"
@@ -742,6 +742,15 @@
           <br />
           <br />
 
+          <style>
+            :root {
+              --img-width: 700px;
+            }
+
+            #chapter-pages > img {
+              min-width: min(100%, var(--img-width));
+            }
+          </style>
           <div
             id="chapter-pages"
             style="overflow-x: auto"
