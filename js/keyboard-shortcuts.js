@@ -17,8 +17,6 @@ export function initKeyboardShortcuts() {
         const dropdown = document.getElementById('chapter-dropdown');
         const prevOption = dropdown.options[dropdown.selectedIndex - 1];
 
-        console.log('prev run');
-
         if (!prevOption) {
           return;
         }
@@ -32,8 +30,6 @@ export function initKeyboardShortcuts() {
       command: () => {
         const dropdown = document.getElementById('chapter-dropdown');
         const nextOption = dropdown.options[dropdown.selectedIndex + 1];
-
-        console.log('next run');
 
         if (!nextOption) {
           return;
