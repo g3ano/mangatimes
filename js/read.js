@@ -3,6 +3,7 @@ import { TapNavigationToggle } from './components/tap-navigation-toggle.js';
 import { PagesGapToggle } from './components/pages-gap-toggle.js';
 import { Scroller } from './scroller.js';
 import { EventStore } from './helpers.js';
+import { initKeyboardShortcuts } from './keyboard-shortcuts.js';
 
 (function () {
   /**
@@ -122,12 +123,12 @@ import { EventStore } from './helpers.js';
     /**
      * Attach click event to page image
      *
-     * @param {HTMLImageElement} element
+     * @param {HTMLImageElement} image
      */
-    function attachEventToImage(element) {
-      element.style.userSelect = 'none';
+    function attachEventToImage(image) {
+      image.style.userSelect = 'none';
 
-      const key = element.dataset.src;
+      const key = image.dataset.src;
 
       if (status && state.stores?.get(key)?.hasAny()) {
         return;
@@ -138,7 +139,7 @@ import { EventStore } from './helpers.js';
         return;
       }
 
-      state.stores.set(key, new EventStore(element));
+      state.stores.set(key, new EventStore(image));
       state.stores.get(key).add('click', () => advanceByPage(chapterPages));
     }
 
@@ -151,10 +152,10 @@ import { EventStore } from './helpers.js';
       const { width, height } = window.screen;
 
       if (!state.direction || state.direction === 'column') {
-        return window.scrollBy({ top: height, behavior: 'smooth' });
+        return window.scrollBy({ top: height - 100, behavior: 'smooth' });
       }
 
-      parent.scrollBy({ left: -width, behavior: 'smooth' });
+      parent.scrollBy({ left: -width + 120, behavior: 'smooth' });
     }
 
     (function () {
@@ -195,4 +196,6 @@ import { EventStore } from './helpers.js';
   customElements.define('pages-gap-toggle', PagesGapToggle);
   customElements.define('direction-toggle', DirectionToggle);
   customElements.define('tap-navigation-toggle', TapNavigationToggle);
+
+  initKeyboardShortcuts();
 })();

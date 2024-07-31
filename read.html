@@ -957,6 +957,7 @@
 
     <script>
       var PlayDownBarIsOpen;
+
       function showScrollMenu() {
         document.getElementById('scrollMenu').style.display = 'block';
       }
@@ -1090,6 +1091,14 @@
         console.error('Next Chapter button not found');
       }
 
+      (function () {
+        window.mangaMeta = {
+          mangaId: '{{ manga_id }}',
+          teamId: '{{ team_id }}',
+        };
+        console.log('manga meta set');
+      })();
+
       function goToNextChapter() {
         const dropdown = document.getElementById('chapter-dropdown');
         const nextOption = dropdown.options[dropdown.selectedIndex + 1];
@@ -1097,6 +1106,10 @@
           const nextChapterId = nextOption.value;
           const mangaId = '{{ manga_id }}';
           const teamId = '{{ team_id }}';
+
+          window.mangaMeta.mangaId = mangaId;
+          window.mangaMeta.teamId = teamId;
+
           const url = `https://mangatime.org/read/${mangaId}/${teamId}/${nextChapterId}`;
           window.location.href = url;
         }
